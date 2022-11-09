@@ -15,6 +15,8 @@ Gives IntelliSense for emojis inside strings and comments in the Visual Studio e
 
 ![EmojiSense](art/EmojiSense.gif)
 
+Inspired by [:emojisense:](https://marketplace.visualstudio.com/items?itemName=bierner.emojisense) by [Matt Bierner](https://github.com/mattbierner)
+
 ## How can I help?
 If you enjoy using the extension, please give it a ★★★★★ rating on the [Visual Studio Marketplace][marketplace].
 
