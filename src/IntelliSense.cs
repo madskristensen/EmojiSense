@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace EmojiSense
 {
@@ -22,12 +23,21 @@ namespace EmojiSense
     [Name(nameof(IntelliSense))]
     public class IntelliSense : IAsyncCompletionSourceProvider
     {
-        public IAsyncCompletionSource GetOrCreate(ITextView textView) =>
-            textView.Properties.GetOrCreateSingletonProperty(() => new AsyncCompletionSource());
+        [Import]
+        public IClassifierAggregatorService ClassifierAggregatorService { get; set; }
+
+        public IAsyncCompletionSource GetOrCreate(ITextView textView)
+        {
+            IClassifier classifier = ClassifierAggregatorService.GetClassifier(textView.TextBuffer);
+            return textView.Properties.GetOrCreateSingletonProperty(() => new AsyncCompletionSource(classifier));
+        }
     }
 
     public class AsyncCompletionSource : IAsyncCompletionSource
     {
+        private static string[] _supportedClassifications = new[] { "string", "comment", "CSS Comment", "CSS String Value", "HTML Comment", "XML Comment" };
+
+        private readonly IClassifier _classifier;
         private static ImmutableArray<CompletionItem> _cache;
         private static readonly ImageElement _icon = new(KnownMonikers.GlyphRight.ToImageId(), "Variable");
         private static readonly Regex _regex = new(@"(?:\s|^):([^:\s]*):?", RegexOptions.Compiled);
@@ -37,6 +47,11 @@ namespace EmojiSense
         public static CompletionFilter ObjectFilter = new("Objects", "O", new ImageElement(KnownMonikers.ProjectAlerts.ToImageId()));
         public static CompletionFilter PlacesFilter = new("Places", "L", new ImageElement(KnownMonikers.FlagDarkRed.ToImageId()));
         public static CompletionFilter SymbolsFilter = new("Symbols", "S", new ImageElement(KnownMonikers.ConnectArrow.ToImageId()));
+
+        public AsyncCompletionSource(IClassifier classifier)
+        {
+            _classifier = classifier;
+        }
 
         public Task<CompletionContext> GetCompletionContextAsync(IAsyncCompletionSession session, CompletionTrigger trigger, SnapshotPoint triggerLocation, SnapshotSpan applicableToSpan, CancellationToken token)
         {
@@ -63,7 +78,7 @@ namespace EmojiSense
             ImmutableArray<CompletionFilter> filter = new List<CompletionFilter>() { compFilter }.ToImmutableArray();
             ImmutableArray<ImageElement> icons = ImmutableArray<ImageElement>.Empty;
 
-            return new CompletionItem(displayName, this, _icon, filter, value, value, order, displayName, icons);
+            return new CompletionItem(displayName, this, _icon, filter, value, value, displayName, displayName, icons);
         }
 
         public Task<object> GetDescriptionAsync(IAsyncCompletionSession session, CompletionItem item, CancellationToken token)
@@ -87,6 +102,15 @@ namespace EmojiSense
             }
 
             ITextSnapshotLine line = triggerLocation.GetContainingLine();
+
+            var classifications = _classifier.GetClassificationSpans(line.Extent);
+            var triggerClassification = classifications.LastOrDefault(c => c.Span.Contains(triggerLocation - 1));
+
+            if (triggerClassification == null || !_supportedClassifications.Any(c => triggerClassification.ClassificationType.IsOfType(c)))
+            {
+                return CompletionStartData.DoesNotParticipateInCompletion;
+            }
+
             string lineText = line.GetText();
 
             foreach (Match match in _regex.Matches(lineText))

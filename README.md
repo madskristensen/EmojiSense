@@ -11,7 +11,9 @@ or get the [CI build][vsixgallery].
 
 --------------------------------------
 
-coming soon...
+Gives IntelliSense for emojis inside strings and comments in the Visual Studio editor. Just type a colon to show the list of available emojis
+
+![EmojiSense](art/EmojiSense.gif)
 
 ## How can I help?
 If you enjoy using the extension, please give it a ★★★★★ rating on the [Visual Studio Marketplace][marketplace].

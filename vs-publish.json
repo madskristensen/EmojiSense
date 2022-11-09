@@ -6,7 +6,10 @@
     "tags": [ "emoji", "unicode", "char", "intellisense" ]
   },
   "assetFiles": [
-
+    {
+      "pathOnDisk": "art/EmojiSense.gif",
+      "targetPath": "art/EmojiSense.gif"
+    }
   ],
   "overview": "README.md",
   "publisher": "MadsKristensen",
