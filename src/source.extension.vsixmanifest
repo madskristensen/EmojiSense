@@ -4,6 +4,7 @@
         <Identity Id="EmojiSense.2461fd3c-53c0-4e86-a00f-52d181d4a194" Version="1.0" Language="en-US" Publisher="Mads Kristensen" />
         <DisplayName>EmojiSense</DisplayName>
         <Description xml:space="preserve">IntelliSense for emojis in code comments and string for all languages</Description>
+        <MoreInfo>https://github.com/madskristensen/EmojiSense</MoreInfo>
         <License>Resources\LICENSE</License>
         <Icon>Resources\Icon.png</Icon>
         <PreviewImage>Resources\Icon.png</PreviewImage>
