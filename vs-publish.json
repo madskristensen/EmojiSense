@@ -3,7 +3,7 @@
   "categories": [ "coding", "documentation" ],
   "identity": {
     "internalName": "EmojiSense",
-    "tags": [ "emoji", "unicode", "char", "intellisense" ]
+    "tags": [ "emoji", "unicode", "intellisense" ]
   },
   "assetFiles": [
     {
