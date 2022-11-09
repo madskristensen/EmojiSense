@@ -53,10 +53,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Download Package artifact
-        uses: actions/download-artifact@v2 
+        uses: actions/download-artifact@v3 
         with:
           name: ${{ github.event.repository.name }}.vsix
 
