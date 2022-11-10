@@ -43,10 +43,10 @@ namespace EmojiSense
         private static readonly Regex _regex = new(@"(?:\s|^):([^:\s]*):?", RegexOptions.Compiled);
 
         public static CompletionFilter PeopleFilter = new("People", "P", new ImageElement(KnownMonikers.FeedbackSmile.ToImageId()));
-        public static CompletionFilter NatureFilter = new("Nature", "N", new ImageElement(KnownMonikers.ASPWebSite.ToImageId()));
-        public static CompletionFilter ObjectFilter = new("Objects", "O", new ImageElement(KnownMonikers.ProjectAlerts.ToImageId()));
-        public static CompletionFilter PlacesFilter = new("Places", "L", new ImageElement(KnownMonikers.FlagDarkRed.ToImageId()));
-        public static CompletionFilter SymbolsFilter = new("Symbols", "S", new ImageElement(KnownMonikers.ConnectArrow.ToImageId()));
+        public static CompletionFilter NatureFilter = new("Nature", "N", new ImageElement(KnownMonikers.BlankWebSite.ToImageId()));
+        public static CompletionFilter ObjectFilter = new("Objects", "O", new ImageElement(KnownMonikers.NotificationAlertMute.ToImageId()));
+        public static CompletionFilter PlacesFilter = new("Places", "L", new ImageElement(KnownMonikers.FlagGroup.ToImageId()));
+        public static CompletionFilter SymbolsFilter = new("Symbols", "S", new ImageElement(KnownMonikers.LineArrow.ToImageId()));
 
         public AsyncCompletionSource(IClassifier classifier)
         {
@@ -57,24 +57,22 @@ namespace EmojiSense
         {
             if (_cache == null)
             {
-                int index = 1;
-                var people = Emojis.People.Select(e => CreateCompletionItem(e, index++, PeopleFilter));
-                var nature = Emojis.Nature.Select(e => CreateCompletionItem(e, index++, NatureFilter));
-                var objects = Emojis.Objects.Select(e => CreateCompletionItem(e, index++, ObjectFilter));
-                var places = Emojis.Places.Select(e => CreateCompletionItem(e, index++, PlacesFilter));
-                var symbols = Emojis.Symbols.Select(e => CreateCompletionItem(e, index++, SymbolsFilter));
+                var people = Emojis.People.Select(e => CreateCompletionItem(e, PeopleFilter));
+                var nature = Emojis.Nature.Select(e => CreateCompletionItem(e, NatureFilter));
+                var objects = Emojis.Objects.Select(e => CreateCompletionItem(e, ObjectFilter));
+                var places = Emojis.Places.Select(e => CreateCompletionItem(e, PlacesFilter));
+                var symbols = Emojis.Symbols.Select(e => CreateCompletionItem(e, SymbolsFilter));
                 _cache = people.Union(nature).Union(objects).Union(places).Union(symbols).ToImmutableArray();
             }
 
             return Task.FromResult(new CompletionContext(_cache));
         }
 
-        private CompletionItem CreateCompletionItem(KeyValuePair<string, string> emojiPair, int index, CompletionFilter compFilter)
+        private CompletionItem CreateCompletionItem(KeyValuePair<string, string> emojiPair, CompletionFilter compFilter)
         {
             string name = emojiPair.Key;
             string displayName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.Trim(':'));
             string value = emojiPair.Value;
-            string order = index.ToString().PadLeft(4, '0');
             ImmutableArray<CompletionFilter> filter = new List<CompletionFilter>() { compFilter }.ToImmutableArray();
             ImmutableArray<ImageElement> icons = ImmutableArray<ImageElement>.Empty;
 
