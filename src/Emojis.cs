@@ -68,7 +68,7 @@ namespace EmojiSense
             {":fire:","🔥"},
             {":fist:","✊"},
             {":flushed:","😳"}, 
-            {":frowning:","😦"},0
+            {":frowning:","😦"},
             {":frowning face:","☹️"},
             {":fu:","🖕"},
             {":girl:","👧"},
